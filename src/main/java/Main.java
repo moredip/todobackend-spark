@@ -9,6 +9,8 @@ import static spark.Spark.*;
 
 public class Main {
     public static void main(String[] args) {
+        port(getPort());
+
         JsonTransformer jsonTransformer = new JsonTransformer();
 
         get("/hello", (req, res) -> "Hello World");
@@ -18,5 +20,14 @@ public class Main {
               Todo.of(1,"foo",false,1)
             );
         }, jsonTransformer);
+    }
+
+    static int getPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }else{
+            return 4567;
+        }
     }
 }
