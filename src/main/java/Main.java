@@ -1,35 +1,26 @@
-import plumbing.JsonTransformer;
-import representations.Todo;
-
-import java.util.Arrays;
-
-import static plumbing.DbMigrate.runMigrationsIfRequested;
-import static spark.Spark.*;
+import plumbing.App;
+import plumbing.Database;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            if( runMigrationsIfRequested(args) ){
-                System.exit(0);
-            }
+            runMigrationsOrStartServer(args);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
+    }
 
-        port(getPort());
+    private static void runMigrationsOrStartServer(String[] commandLineArgs) throws Exception {
+        if( runMigrationsIfRequested(commandLineArgs) ){
+            return;
+        }
 
-        JsonTransformer jsonTransformer = new JsonTransformer();
+        App.initServer(getPort());
+    }
 
-        redirect.get("/", "/todos");
-
-        get("/hello", (req, res) -> "Hello World");
-
-        get("/todos", "application/json", (request, response) -> {
-            return Arrays.asList(
-              Todo.of(1,"foo",false,1)
-            );
-        }, jsonTransformer);
+    private static boolean runMigrationsIfRequested(String[] commandLineArgs) throws Exception {
+        return Database.fromEnvVar().runMigrationsIfRequested(commandLineArgs);
     }
 
     static int getPort() {

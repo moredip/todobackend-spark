@@ -1,11 +1,11 @@
-package representations;
+package db;
 
 import lombok.Data;
 
-@Data(staticConstructor = "of")
-public class Todo {
+@Data
+public class TodoRecord {
     final private int id;
     final private String title;
     final private Boolean completed;
-    final private Integer order;
+    final private Integer item_order;
 }
