@@ -1,14 +1,22 @@
 import plumbing.JsonTransformer;
 import representations.Todo;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import static plumbing.DbMigrate.runMigrationsIfRequested;
 import static spark.Spark.*;
 
 public class Main {
     public static void main(String[] args) {
+        try {
+            if( runMigrationsIfRequested(args) ){
+                System.exit(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         port(getPort());
 
         JsonTransformer jsonTransformer = new JsonTransformer();
