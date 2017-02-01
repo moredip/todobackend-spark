@@ -13,6 +13,8 @@ public class Main {
 
         JsonTransformer jsonTransformer = new JsonTransformer();
 
+        redirect.get("/", "/todos");
+
         get("/hello", (req, res) -> "Hello World");
 
         get("/todos", "application/json", (request, response) -> {
