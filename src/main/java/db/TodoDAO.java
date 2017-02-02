@@ -9,10 +9,14 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @RegisterMapper(TodoMapper.class)
 public interface TodoDAO {
-    @SqlQuery("insert into todos (title,completed,item_order) values (:title, false, 0) RETURNING *")
+    @SqlQuery("INSERT INTO todos (title,completed,item_order) VALUES (:title, false, 0) RETURNING *")
     Todo createTodo(@Bind("title") String title);
+
+    @SqlQuery("SELECT * FROM todos")
+    List<Todo> findAll();
 }
 

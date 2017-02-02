@@ -4,6 +4,8 @@ import db.TodoDAO;
 import representations.NewTodo;
 import domain.Todo;
 
+import java.util.List;
+
 public class TodoController {
     final private TodoDAO dao;
 
@@ -13,5 +15,9 @@ public class TodoController {
 
     public Todo createTodo(NewTodo newTodo){
         return dao.createTodo(newTodo.getTitle());
+    }
+
+    public List<Todo> allTodos(){
+        return dao.findAll();
     }
 }

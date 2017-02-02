@@ -32,10 +32,6 @@ public class App {
             return todo;
         }, jsonTransformer);
 
-        get("/todos", "application/json", (request, response) -> {
-            return Arrays.asList(
-                    Todo.of(1,"foo",false,1)
-            );
-        }, jsonTransformer);
+        get("/todos", "application/json", (request, response) -> controller.allTodos(), jsonTransformer);
     }
 }

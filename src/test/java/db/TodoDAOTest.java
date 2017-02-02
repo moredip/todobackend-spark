@@ -1,14 +1,15 @@
 package db;
 
 import domain.Todo;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.skife.jdbi.v2.DBI;
 import plumbing.Database;
 
-import javax.xml.crypto.Data;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class TodoDAOTest {
@@ -27,5 +28,18 @@ public class TodoDAOTest {
         assertEquals(false,createdTodo.getCompleted());
         assertEquals((Integer)0,createdTodo.getOrder());
         assertNotNull(createdTodo.getId());
+    }
+
+    @Test
+    public void creatingSomeTodosThenReadingThemBack(){
+        dao.createTodo("todo-the-first");
+        dao.createTodo("todo-el-segundo");
+
+        List<Todo> allTodos = dao.findAll();
+        assertThat(allTodos.size(), is(greaterThanOrEqualTo(2)));
+
+        List<String> allTitles = allTodos.stream().map(Todo::getTitle).collect(Collectors.toList());
+        assertThat( allTitles, hasItem("todo-the-first"));
+        assertThat( allTitles, hasItem("todo-el-segundo"));
     }
 }
