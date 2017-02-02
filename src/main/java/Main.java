@@ -1,6 +1,8 @@
 import plumbing.App;
 import plumbing.Database;
 
+import java.util.Optional;
+
 public class Main {
     public static void main(String[] args) {
         try {
@@ -23,12 +25,9 @@ public class Main {
         return Database.fromEnvVar().runMigrationsIfRequested(commandLineArgs);
     }
 
-    static int getPort() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }else{
-            return 4567;
-        }
+    private static int getPort() {
+        return Optional.ofNullable(System.getenv("PORT"))
+                .map(Integer::parseInt)
+                .orElse(4567);
     }
 }

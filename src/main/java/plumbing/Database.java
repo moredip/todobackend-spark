@@ -8,25 +8,26 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class Database {
     private final DataSource dataSource;
 
     public static Database fromEnvVar() throws URISyntaxException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+        String dbUrl = Optional.ofNullable(System.getenv("DATABASE_URL"))
+                .orElse("postgresql://postgres:pass@192.168.99.100:5432/app");
+
+        URI dbUri = new URI(dbUrl);
 
         String username = dbUri.getUserInfo().split(":")[0];
         String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+        String jdbcUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
-        return new Database(dbUrl, username, password);
+        return new Database(jdbcUrl, username, password);
     }
 
     public static Database forIntegrationTesting() {
-        String pgHost = System.getenv("DATABASE_URL");
-        if( pgHost == null ) {
-            pgHost = "192.168.99.100";
-        }
+        String pgHost = Optional.ofNullable(System.getenv("PG_HOST")).orElse("192.168.99.100");
 
         return new Database(
                 "jdbc:postgresql://"+pgHost+":5432/app_test",
