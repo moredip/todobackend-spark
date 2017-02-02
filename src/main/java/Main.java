@@ -1,35 +1,33 @@
-import plumbing.JsonTransformer;
-import representations.Todo;
+import plumbing.App;
+import plumbing.Database;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static spark.Spark.*;
+import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) {
-        port(getPort());
-
-        JsonTransformer jsonTransformer = new JsonTransformer();
-
-        redirect.get("/", "/todos");
-
-        get("/hello", (req, res) -> "Hello World");
-
-        get("/todos", "application/json", (request, response) -> {
-            return Arrays.asList(
-              Todo.of(1,"foo",false,1)
-            );
-        }, jsonTransformer);
+        try {
+            runMigrationsOrStartServer(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
-    static int getPort() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }else{
-            return 4567;
+    private static void runMigrationsOrStartServer(String[] commandLineArgs) throws Exception {
+        if( runMigrationsIfRequested(commandLineArgs) ){
+            return;
         }
+
+        App.initServer(getPort());
+    }
+
+    private static boolean runMigrationsIfRequested(String[] commandLineArgs) throws Exception {
+        return Database.fromEnvVar().runMigrationsIfRequested(commandLineArgs);
+    }
+
+    private static int getPort() {
+        return Optional.ofNullable(System.getenv("PORT"))
+                .map(Integer::parseInt)
+                .orElse(4567);
     }
 }

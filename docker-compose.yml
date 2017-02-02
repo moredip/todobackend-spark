@@ -2,3 +2,35 @@ app:
   build: .
   ports:
     - "3000:3000"
+  links:
+    - pg
+  environment:
+    - DATABASE_URL=postgres://postgres:pass@pg:5432/app
+
+mvn:
+  image: maven:3.3.9-jdk-8-alpine
+  volumes_from:
+    - mvn_state
+  volumes:
+    - ".:/usr/src/app"
+  working_dir: "/usr/src/app"
+  links:
+    - pg
+  environment:
+    - PG_HOST=pg
+
+mvn_state:
+  image:  busybox
+  volumes:
+    - "/root/.m2"
+
+pg:
+  image: postgres:9.4.5
+  ports:
+    - "5432:5432"
+  environment:
+   - POSTGRES_PASSWORD=pass
+   - POSTGRES_USER=postgres
+  volumes:
+    - "./docker/psql-init:/docker-entrypoint-initdb.d"
+     
