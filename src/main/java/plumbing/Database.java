@@ -23,8 +23,13 @@ public class Database {
     }
 
     public static Database forIntegrationTesting() {
+        String pgHost = System.getenv("DATABASE_URL");
+        if( pgHost == null ) {
+            pgHost = "192.168.99.100";
+        }
+
         return new Database(
-                "jdbc:postgresql://192.168.99.100:5432/app_test",
+                "jdbc:postgresql://"+pgHost+":5432/app_test",
                 "postgres",
                 "pass"
         );
