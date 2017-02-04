@@ -49,6 +49,7 @@ public class App {
 
         delete("/todos/:id", "application/json", (request, response) -> {
             Integer todoId = Integer.parseInt(request.params("id"));
+            controller.deleteTodo(todoId);
             return "";
         });
     }

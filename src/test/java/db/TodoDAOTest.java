@@ -22,23 +22,23 @@ public class TodoDAOTest {
 
     @Test
     public void createNewTodoReturnsSaneLookingEntity(){
-        Todo createdTodo = dao.createTodo("my-new-todo");
+        Todo createdTodo = dao.createTodo("my-new-todo", 123);
         assertEquals("my-new-todo",createdTodo.getTitle());
         assertEquals(false,createdTodo.getCompleted());
-        assertEquals((Integer)0,createdTodo.getOrder());
+        assertThat(createdTodo.getOrder(), is(equalTo(123)));
         assertNotNull(createdTodo.getId());
 
         Todo refetchedTodo = dao.findById(createdTodo.getId());
         assertEquals("my-new-todo",refetchedTodo.getTitle());
         assertEquals(false,refetchedTodo.getCompleted());
-        assertEquals((Integer)0,refetchedTodo.getOrder());
+        assertThat(refetchedTodo.getOrder(), is(equalTo(123)));
         assertNotNull(refetchedTodo.getId());
     }
 
     @Test
     public void creatingSomeTodosThenReadingThemBack(){
-        dao.createTodo("todo-the-first");
-        dao.createTodo("todo-el-segundo");
+        dao.createTodo("todo-the-first", null);
+        dao.createTodo("todo-el-segundo", null);
 
         List<Todo> allTodos = dao.findAll();
         assertThat(allTodos.size(), is(greaterThanOrEqualTo(2)));
@@ -50,7 +50,7 @@ public class TodoDAOTest {
 
     @Test
     public void findingATodoWhichExists(){
-        Todo createdTodo = dao.createTodo("blah");
+        Todo createdTodo = dao.createTodo("blah", null);
         Todo foundTodo = dao.findById(createdTodo.getId());
 
         assertThat(foundTodo, is(equalTo(createdTodo)));
@@ -64,7 +64,7 @@ public class TodoDAOTest {
 
     @Test
     public void deletingAllTodos(){
-        dao.createTodo("blah");
+        dao.createTodo("blah", null);
         assertThat(dao.findAll().size(), is(greaterThan(0)));
         dao.deleteAll();
         assertThat(dao.findAll().size(), is(equalTo(0)));
@@ -72,20 +72,20 @@ public class TodoDAOTest {
 
     @Test
     public void updateJustTodoTitle(){
-        Todo initialTodo = dao.createTodo("original-title");
+        Todo initialTodo = dao.createTodo("original-title", null);
         Integer todoId = initialTodo.getId();
 
-        dao.updateTodo(todoId,"new-title", null);
+        dao.updateTodo(todoId,"new-title", null, null);
         assertThat(dao.findById(todoId).getTitle(), is("new-title"));
         assertThat(dao.findById(todoId).getCompleted(), is(false));
     }
 
     @Test
     public void updateTodoTitleAndCompletedness(){
-        Todo initialTodo = dao.createTodo("original-title");
+        Todo initialTodo = dao.createTodo("original-title", null);
         Integer todoId = initialTodo.getId();
 
-        Todo updatedTodo = dao.updateTodo(todoId, "new-title", true);
+        Todo updatedTodo = dao.updateTodo(todoId, "new-title", true, null);
         Todo refetchedTodo = dao.findById(todoId);
 
         assertEquals(updatedTodo,refetchedTodo);
@@ -96,13 +96,31 @@ public class TodoDAOTest {
 
     @Test
     public void updateJustTodoCompletedness(){
-        Todo initialTodo = dao.createTodo("original-title");
+        Todo initialTodo = dao.createTodo("original-title", null);
         Integer todoId = initialTodo.getId();
 
-        dao.updateTodo(todoId,null,true);
+        dao.updateTodo(todoId,null,true,null);
 
         Todo refetchedTodo = dao.findById(todoId);
         assertThat(refetchedTodo.getTitle(), is("original-title"));
         assertThat(dao.findById(todoId).getCompleted(), is(true));
+    }
+
+    @Test
+    public void updateTodoOrder(){
+        Todo initialTodo = dao.createTodo("blah", null);
+        Integer todoId = initialTodo.getId();
+
+        dao.updateTodo(todoId,null,true,321);
+
+        Todo refetchedTodo = dao.findById(todoId);
+        assertThat(dao.findById(todoId).getOrder(), is(321));
+    }
+
+    @Test
+    public void deletingATodo(){
+        Todo createdTodo = dao.createTodo("blah", null);
+        dao.deleteById(createdTodo.getId());
+        assertThat(dao.findById(createdTodo.getId()),is(nullValue()));
     }
 }

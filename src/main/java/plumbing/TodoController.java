@@ -4,7 +4,6 @@ import db.TodoDAO;
 import domain.Todo;
 import representations.NewTodo;
 import representations.TodoUpdate;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class TodoController {
     }
 
     public Todo createTodo(NewTodo newTodo){
-        return dao.createTodo(newTodo.getTitle());
+        return dao.createTodo(newTodo.getTitle(),newTodo.getOrder());
     }
 
     public List<Todo> getAllTodos(){
@@ -33,6 +32,10 @@ public class TodoController {
     }
 
     public Todo patchTodo(Integer todoId, TodoUpdate update) {
-        return dao.updateTodo(todoId,update.getTitle(), update.isCompleted());
+        return dao.updateTodo(todoId,update.getTitle(), update.isCompleted(), update.getOrder());
+    }
+
+    public void deleteTodo(Integer todoId) {
+        dao.deleteById(todoId);
     }
 }
