@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import db.TodoDAO;
 import domain.Todo;
 import representations.NewTodo;
+import representations.TodoUpdate;
 
 import static plumbing.SparkRequestContext.inContextOf;
 import static spark.Spark.*;
@@ -38,6 +39,12 @@ public class App {
         get("/todos/:id", "application/json", (request, response) -> {
             Integer todoId = Integer.parseInt(request.params("id"));
             return inContextOf(request).represent(controller.getTodo(todoId));
+        });
+
+        patch("/todos/:id", "application/json", (request, response) -> {
+            Integer todoId = Integer.parseInt(request.params("id"));
+            TodoUpdate update = gson.fromJson(request.body(), TodoUpdate.class);
+            return inContextOf(request).represent(controller.patchTodo(todoId,update));
         });
 
         delete("/todos/:id", "application/json", (request, response) -> {

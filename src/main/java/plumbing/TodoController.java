@@ -3,6 +3,8 @@ package plumbing;
 import db.TodoDAO;
 import domain.Todo;
 import representations.NewTodo;
+import representations.TodoUpdate;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -26,7 +28,11 @@ public class TodoController {
         return "[]";
     }
 
-    public domain.Todo getTodo(Integer todoId) {
+    public Todo getTodo(Integer todoId) {
         return dao.findById(todoId);
+    }
+
+    public Todo patchTodo(Integer todoId, TodoUpdate update) {
+        return dao.updateTodo(todoId,update.getTitle(), update.isCompleted());
     }
 }

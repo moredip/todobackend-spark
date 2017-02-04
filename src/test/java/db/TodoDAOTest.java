@@ -2,7 +2,6 @@ package db;
 
 import domain.Todo;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import plumbing.Database;
 
@@ -28,6 +27,12 @@ public class TodoDAOTest {
         assertEquals(false,createdTodo.getCompleted());
         assertEquals((Integer)0,createdTodo.getOrder());
         assertNotNull(createdTodo.getId());
+
+        Todo refetchedTodo = dao.findById(createdTodo.getId());
+        assertEquals("my-new-todo",refetchedTodo.getTitle());
+        assertEquals(false,refetchedTodo.getCompleted());
+        assertEquals((Integer)0,refetchedTodo.getOrder());
+        assertNotNull(refetchedTodo.getId());
     }
 
     @Test
@@ -63,5 +68,41 @@ public class TodoDAOTest {
         assertThat(dao.findAll().size(), is(greaterThan(0)));
         dao.deleteAll();
         assertThat(dao.findAll().size(), is(equalTo(0)));
+    }
+
+    @Test
+    public void updateJustTodoTitle(){
+        Todo initialTodo = dao.createTodo("original-title");
+        Integer todoId = initialTodo.getId();
+
+        dao.updateTodo(todoId,"new-title", null);
+        assertThat(dao.findById(todoId).getTitle(), is("new-title"));
+        assertThat(dao.findById(todoId).getCompleted(), is(false));
+    }
+
+    @Test
+    public void updateTodoTitleAndCompletedness(){
+        Todo initialTodo = dao.createTodo("original-title");
+        Integer todoId = initialTodo.getId();
+
+        Todo updatedTodo = dao.updateTodo(todoId, "new-title", true);
+        Todo refetchedTodo = dao.findById(todoId);
+
+        assertEquals(updatedTodo,refetchedTodo);
+
+        assertThat(refetchedTodo.getTitle(), is("new-title"));
+        assertThat(refetchedTodo.getCompleted(), is(true));
+    }
+
+    @Test
+    public void updateJustTodoCompletedness(){
+        Todo initialTodo = dao.createTodo("original-title");
+        Integer todoId = initialTodo.getId();
+
+        dao.updateTodo(todoId,null,true);
+
+        Todo refetchedTodo = dao.findById(todoId);
+        assertThat(refetchedTodo.getTitle(), is("original-title"));
+        assertThat(dao.findById(todoId).getCompleted(), is(true));
     }
 }

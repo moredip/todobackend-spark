@@ -1,15 +1,11 @@
 package db;
 
 import domain.Todo;
-import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 @RegisterMapper(TodoMapper.class)
@@ -25,5 +21,12 @@ public interface TodoDAO {
 
     @SqlUpdate("DELETE FROM todos")
     void deleteAll();
+
+    @SqlQuery(
+            "UPDATE todos " +
+            "SET title=COALESCE(:title,title), completed=COALESCE(:completed,completed) " +
+            "WHERE id = :id " +
+            "RETURNING *")
+    Todo updateTodo(@Bind("id") Integer id, @Bind("title") String title, @Bind("completed")Boolean completed);
 }
 
