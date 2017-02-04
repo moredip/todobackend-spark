@@ -4,6 +4,7 @@ import domain.Todo;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -21,5 +22,8 @@ public interface TodoDAO {
 
     @SqlQuery("SELECT * FROM todos WHERE id = :id LIMIT 1")
     Todo findById(@Bind("id") Integer id);
+
+    @SqlUpdate("DELETE FROM todos")
+    void deleteAll();
 }
 

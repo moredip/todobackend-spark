@@ -2,19 +2,16 @@ package plumbing;
 
 import com.google.gson.Gson;
 import db.TodoDAO;
-import representations.NewTodo;
 import domain.Todo;
+import representations.NewTodo;
 
-import java.net.URISyntaxException;
-import java.util.Arrays;
-
+import static plumbing.SparkRequestContext.inContextOf;
 import static spark.Spark.*;
 
 public class App {
     public static void initServer(int port) throws Exception {
         port(port);
 
-        JsonTransformer jsonTransformer = new JsonTransformer();
         Gson gson = new Gson();
 
         Database db = Database.fromEnvVar();
@@ -31,10 +28,22 @@ public class App {
             NewTodo newTodo = gson.fromJson(request.body(), NewTodo.class);
             Todo todo = controller.createTodo(newTodo);
             response.status(201);
-            return todo;
-        }, jsonTransformer);
+            return inContextOf(request).represent(todo);
+        });
 
-        get("/todos", "application/json", (request, response) -> controller.allTodos(), jsonTransformer);
+        get("/todos", "application/json", (request, response) -> inContextOf(request).represent(controller.getAllTodos()));
+
+        delete("/todos", "application/json", (request, response) -> controller.deleteAllTodos());
+
+        get("/todos/:id", "application/json", (request, response) -> {
+            Integer todoId = Integer.parseInt(request.params("id"));
+            return inContextOf(request).represent(controller.getTodo(todoId));
+        });
+
+        delete("/todos/:id", "application/json", (request, response) -> {
+            Integer todoId = Integer.parseInt(request.params("id"));
+            return "";
+        });
     }
 
     // based on https://sparktutorials.github.io/2016/05/01/cors.html

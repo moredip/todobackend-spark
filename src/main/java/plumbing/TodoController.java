@@ -1,8 +1,8 @@
 package plumbing;
 
 import db.TodoDAO;
-import representations.NewTodo;
 import domain.Todo;
+import representations.NewTodo;
 
 import java.util.List;
 
@@ -17,7 +17,16 @@ public class TodoController {
         return dao.createTodo(newTodo.getTitle());
     }
 
-    public List<Todo> allTodos(){
+    public List<Todo> getAllTodos(){
         return dao.findAll();
+    }
+
+    public String deleteAllTodos() {
+        dao.deleteAll();
+        return "[]";
+    }
+
+    public domain.Todo getTodo(Integer todoId) {
+        return dao.findById(todoId);
     }
 }

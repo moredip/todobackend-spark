@@ -56,4 +56,12 @@ public class TodoDAOTest {
         Todo foundTodo = dao.findById(1421312412);
         assertThat(foundTodo, is(nullValue()));
     }
+
+    @Test
+    public void deletingAllTodos(){
+        dao.createTodo("blah");
+        assertThat(dao.findAll().size(), is(greaterThan(0)));
+        dao.deleteAll();
+        assertThat(dao.findAll().size(), is(equalTo(0)));
+    }
 }

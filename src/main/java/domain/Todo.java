@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data(staticConstructor = "of")
 public class Todo {
-    final private Integer id;
-    final private String title;
-    final private Boolean completed;
-    final private Integer order;
+    public final Integer id;
+    public final String title;
+    public final Boolean completed;
+    public final Integer order;
 }
