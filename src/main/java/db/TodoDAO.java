@@ -18,5 +18,8 @@ public interface TodoDAO {
 
     @SqlQuery("SELECT * FROM todos")
     List<Todo> findAll();
+
+    @SqlQuery("SELECT * FROM todos WHERE id = :id LIMIT 1")
+    Todo findById(@Bind("id") Integer id);
 }
 
