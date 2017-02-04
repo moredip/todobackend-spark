@@ -25,6 +25,8 @@ public class App {
 
         addCORS();
 
+        addExceptionHandler();
+
         post("/todos", "application/json", (request,response) -> {
             NewTodo newTodo = gson.fromJson(request.body(), NewTodo.class);
             Todo todo = controller.createTodo(newTodo);
@@ -54,8 +56,14 @@ public class App {
         });
     }
 
+    private static void addExceptionHandler() {
+        exception(Exception.class, (exception, request, response) -> {
+            exception.printStackTrace();
+        });
+    }
+
     // based on https://sparktutorials.github.io/2016/05/01/cors.html
-    static void addCORS(){
+    private static void addCORS(){
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
         });
