@@ -1,0 +1,4 @@
+---
+- name: test
+  service: mvn
+  command: mvn test
